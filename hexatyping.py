@@ -44,7 +44,14 @@ def get_sentence(mode):
         "Programming Knowledge": "prog_knowledge.txt",
         "OS Commands": "os_commands.txt"
     }
-    paths = [os.path.dirname(__file__), "/usr/share/hexatyping/"]
+    
+    # Path setup: Looks in 'content' folder relative to script OR system path
+    base_dir = os.path.dirname(__file__)
+    paths = [
+        os.path.join(base_dir, "content"),
+        "/usr/share/hexatyping/content/"
+    ]
+    
     filename = mode_files.get(mode, "sentences.txt")
     
     for p in paths:
