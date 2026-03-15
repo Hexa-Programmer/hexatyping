@@ -41,7 +41,8 @@ Features:
 
 Installation:
 To install hexatype, use:
-    ```bash
+    ```
+    bash
     git clone https://github.com/Hexa-Programmer/hexatyping.git
     cd hexatype-tui-git
     python hexatyping.py
