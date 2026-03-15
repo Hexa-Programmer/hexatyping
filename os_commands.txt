@@ -1,8 +1,0 @@
-sudo pacman -Syu --noconfirm
-grep -r "error" /var/log/syslog
-chmod +x hexatype.py && ./hexatype.py
-tar -xzvf archive.tar.gz -C /tmp
-find . -name "*.py" -exec wc -l {} +
-ssh user@remote-host -p 22
-systemctl list-units --type=service
-ls -la | awk '{print $9}' | sort
