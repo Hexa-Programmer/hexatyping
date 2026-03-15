@@ -50,4 +50,4 @@ Note: This project was developed by Hexa Programmer. The content for the modes (
 
 ![Hexatyping Gameplay](./content/sc1.jpg)
 
-![Hexatyping Gameplay](./coontent/sc2.jpg)
+![Hexatyping Gameplay](./content/sc2.jpg)
