@@ -169,4 +169,4 @@ def main(stdscr):
             if result == "exit": return
 
 if __name__ == "__main__":
-    curses.wrapper(main)import curses
+    curses.wrapper(main)
