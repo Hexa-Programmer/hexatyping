@@ -1,3 +1,12 @@
+  _                    _               _             
+ | |                  | |             (_)            
+ | |__   _____  ____ _| |_ _   _ _ __  _ _ __   __ _ 
+ | '_ \ / _ \ \/ / _` | __| | | | '_ \| | '_ \ / _` |
+ | | | |  __/>  < (_| | |_| |_| | |_) | | | | | (_| |
+ |_| |_|\___/_/\_\__,_|\__|\__, | .__/|_|_| |_|\__, |
+                            __/ | |             __/ |
+                           |___/|_|            |___/ 
+
 Hexatyping is a minimalist, terminal-based typing tester (TUI) built for Linux power users, developed in Python. 
 It features 5 distinct modes designed to help you master both typing speed and technical knowledge.
 
