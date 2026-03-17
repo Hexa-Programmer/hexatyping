@@ -47,7 +47,7 @@ def get_sentence(mode, sub_mode=None):
     search_paths = [os.path.join(base_dir, "content"), "/usr/share/hexatyping/content/"]
     
     if mode == "Programming" and sub_mode:
-        filename = f"programming/{sub_mode.lower()}.txt"
+        filename = f"{sub_mode.lower()}.txt"
     else:
         filename = mode_map.get(mode, "sentences.txt")
     
@@ -58,7 +58,7 @@ def get_sentence(mode, sub_mode=None):
                 lines = [l.strip() for l in f if l.strip()]
                 if lines: return random.choice(lines)
                 
-    return f"missing file: {filename} 💀"
+    return f"missing: {filename}"
 
 def draw_big_score(stdscr, score, y, x):
     s_score = str(int(score))
@@ -152,7 +152,6 @@ def main(stdscr):
     
     while True:
         choice = generic_menu(stdscr, "HEXATYPING MAIN", main_options)
-        
         if choice == "Exit": break
         
         sub = None
