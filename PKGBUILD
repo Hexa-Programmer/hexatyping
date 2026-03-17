@@ -25,7 +25,7 @@ package() {
 
     mkdir -p "$pkgdir/usr/bin"
     ln -s /usr/share/hexatyping/hexatyping.py "$pkgdir/usr/bin/hexatyping"
-}# Maintainer: Hexa Programmer <your-email-here>
+}# Maintainer: Hexa-Programmer
 pkgname=hexatyping-git
 _pkgname=hexatyping
 pkgver=1.0.0
