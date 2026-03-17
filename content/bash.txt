@@ -1,0 +1,5 @@
+for i in {1..5}; do echo "Iterating: $i"; done
+yay -Syu --noconfirm && flatpak update -y
+ls -la | grep "^d" | wc -l
+[[ -f "$FILE" ]] && echo "Exists" || echo "Missing"
+find . -name "*.py" -type f -exec chmod +x {} +
