@@ -29,39 +29,36 @@ def load_scores():
 
 def save_score(mode, wpm):
     scores = load_scores()
-    if mode not in scores:
-        scores[mode] = []
+    if mode not in scores: scores[mode] = []
     scores[mode].append(int(wpm))
     scores[mode] = sorted(scores[mode], reverse=True)[:5]
-    with open(SCORE_FILE, 'w') as f:
-        json.dump(scores, f)
+    with open(SCORE_FILE, 'w') as f: json.dump(scores, f)
 
-def get_sentence(mode):
-    mode_files = {
+def get_sentence(mode, sub_mode=None):
+    mode_map = {
         "Normal": "sentences.txt",
-        "Programming": "programming.txt",
+        "Symbols": "symbols.txt",
         "General Knowledge": "gk.txt",
         "Programming Knowledge": "prog_knowledge.txt",
         "OS Commands": "os_commands.txt"
     }
     
-    # Path setup: Looks in 'content' folder relative to script OR system path
     base_dir = os.path.dirname(__file__)
-    paths = [
-        os.path.join(base_dir, "content"),
-        "/usr/share/hexatyping/content/"
-    ]
+    search_paths = [os.path.join(base_dir, "content"), "/usr/share/hexatyping/content/"]
     
-    filename = mode_files.get(mode, "sentences.txt")
+    if mode == "Programming" and sub_mode:
+        filename = f"programming/{sub_mode.lower()}.txt"
+    else:
+        filename = mode_map.get(mode, "sentences.txt")
     
-    for p in paths:
+    for p in search_paths:
         file_path = os.path.join(p, filename)
         if os.path.exists(file_path):
             with open(file_path, 'r') as f:
                 lines = [l.strip() for l in f if l.strip()]
                 if lines: return random.choice(lines)
                 
-    return "i use arch btw 💀"
+    return f"missing file: {filename} 💀"
 
 def draw_big_score(stdscr, score, y, x):
     s_score = str(int(score))
@@ -71,33 +68,32 @@ def draw_big_score(stdscr, score, y, x):
             line += BIG_FONT.get(digit, ["          "] * 6)[i] + " "
         stdscr.addstr(y + i, x, line, curses.color_pair(1) | curses.A_BOLD)
 
-def main_menu(stdscr):
-    modes = ["Normal", "Programming", "General Knowledge", "Programming Knowledge", "OS Commands", "Exit"]
+def generic_menu(stdscr, title, options):
     curses.curs_set(0)
     while True:
         stdscr.clear()
-        stdscr.addstr(2, 4, "[ HEXATYPING TERMINAL ]", curses.A_BOLD | curses.color_pair(1))
-        stdscr.addstr(3, 4, "Select mode (1-6):", curses.A_DIM)
-        for i, mode in enumerate(modes):
-            stdscr.addstr(6 + i, 4, f"{i+1}. {mode}")
+        stdscr.addstr(2, 4, f"[ {title} ]", curses.A_BOLD | curses.color_pair(1))
+        stdscr.addstr(3, 4, "Select an option:", curses.A_DIM)
+        for i, opt in enumerate(options):
+            stdscr.addstr(6 + i, 4, f"{i+1}. {opt}")
         stdscr.refresh()
         key = stdscr.getch()
-        if ord('1') <= key <= ord(str(len(modes))):
-            return modes[key - ord('1')]
-        elif key == 27: return "Exit"
+        if ord('1') <= key <= ord(str(len(options))):
+            return options[key - ord('1')]
+        elif key == 27: return "Back"
 
-def play_game(stdscr, mode):
+def play_game(stdscr, mode, sub_mode=None):
     curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLUE)
     
-    target = get_sentence(mode)
+    target = get_sentence(mode, sub_mode)
+    display_name = sub_mode if sub_mode else mode
     user_input = ""
     wpm_history = []
     start_time = None
-    errors = 0
     
-    all_scores = load_scores().get(mode, [])
+    all_scores = load_scores().get(display_name, [])
     current_pb = all_scores[0] if all_scores else 0
 
     while True:
@@ -111,7 +107,7 @@ def play_game(stdscr, mode):
         
         if start_time: wpm_history.append(raw_wpm)
 
-        status = f" MODE: {mode} | TIME: {int(elapsed)}s | ACC: {int(accuracy)}% | PB: {current_pb} "
+        status = f" MODE: {display_name} | ACC: {int(accuracy)}% | PB: {current_pb} "
         stdscr.addstr(0, 0, status.center(w), curses.color_pair(3))
 
         stdscr.addstr(4, 4, target, curses.A_DIM)
@@ -121,8 +117,7 @@ def play_game(stdscr, mode):
                 stdscr.addstr(4, 4 + i, c, color | curses.A_BOLD)
 
         if start_time:
-            history_slice = wpm_history[-(w-10):]
-            graph = "".join([' ', '▂', '▃', '▄', '▅', '▆', '▇', '█'][min(int(v/15), 7)] for v in history_slice)
+            graph = "".join([' ', '▂', '▃', '▄', '▅', '▆', '▇', '█'][min(int(v/15), 7)] for v in wpm_history[-(w-10):])
             stdscr.addstr(h-2, 2, f"SPEED: {graph}")
 
         stdscr.refresh()
@@ -130,26 +125,11 @@ def play_game(stdscr, mode):
         if len(user_input) >= len(target):
             stdscr.clear()
             final_wpm = (correct_chars / 5) / (elapsed / 60)
-            save_score(mode, final_wpm)
-            updated_scores = load_scores().get(mode, [])
-
-            stdscr.addstr(1, 4, f"[ {mode.upper()} RESULTS ]", curses.A_BOLD)
+            save_score(display_name, final_wpm)
+            
             draw_big_score(stdscr, final_wpm, 3, 4)
-            
-            if updated_scores and int(final_wpm) >= updated_scores[0]:
-                stdscr.addstr(3, 35, "NEW PERSONAL BEST!", curses.color_pair(1) | curses.A_BOLD)
-            
-            stdscr.addstr(5, 35, "TOP SCORES:", curses.A_DIM)
-            for i, s in enumerate(updated_scores[:3]):
-                stdscr.addstr(6 + i, 35, f"{i+1}. {s} WPM")
-
-            full_graph = "".join([' ', '▂', '▃', '▄', '▅', '▆', '▇', '█'][min(int(v/15), 7)] for v in wpm_history)
-            stdscr.addstr(10, 4, "WPM PROGRESSION:", curses.A_DIM)
-            stdscr.addstr(11, 4, full_graph, curses.color_pair(1))
-            
-            summary = f"RAW: {int(raw_wpm)} | ACC: {int(accuracy)}% | TIME: {int(elapsed)}s"
-            stdscr.addstr(13, 4, summary)
-            stdscr.addstr(15, 4, "r: Restart | m: Menu | Esc: Exit", curses.A_BOLD)
+            stdscr.addstr(10, 4, f"FINAL WPM: {int(final_wpm)} | ACCURACY: {int(accuracy)}%", curses.A_BOLD)
+            stdscr.addstr(12, 4, "r: Restart | m: Menu | Esc: Exit")
             
             stdscr.refresh()
             key = stdscr.getch()
@@ -167,11 +147,21 @@ def play_game(stdscr, mode):
             user_input += chr(key)
 
 def main(stdscr):
+    main_options = ["Normal", "Programming", "Symbols", "General Knowledge", "Programming Knowledge", "OS Commands", "Exit"]
+    prog_options = ["Python", "C++", "JavaScript", "Rust", "Bash", "Back"]
+    
     while True:
-        mode = main_menu(stdscr)
-        if mode == "Exit": break
+        choice = generic_menu(stdscr, "HEXATYPING MAIN", main_options)
+        
+        if choice == "Exit": break
+        
+        sub = None
+        if choice == "Programming":
+            sub = generic_menu(stdscr, "SELECT LANGUAGE", prog_options)
+            if sub == "Back": continue
+            
         while True:
-            result = play_game(stdscr, mode)
+            result = play_game(stdscr, choice, sub)
             if result == "menu": break
             if result == "exit": return
 
