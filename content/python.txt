@@ -1,1 +1,7 @@
-
+print(f"User {name} is {age} years old.")
+numbers = [x**2 for x in range(10) if x % 2 == 0]
+def fetch_data(url: str) -> dict: return requests.get(url).json()
+with open('data.json', 'w') as f: json.dump(payload, f, indent=4)
+try: result = 10 / 0 except ZeroDivisionError: result = None
+lambda x, y: x if x > y else y
+import curses; stdscr = curses.initscr(); curses.noecho()
