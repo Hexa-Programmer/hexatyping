@@ -1,8 +1,0 @@
-def main(): print("Hello, Hexa!")
-for i in range(10): total += i
-#include <iostream> using namespace std;
-if [[ $status -eq 0 ]]; then echo "Success"; fi
-[x**2 for x in range(10) if x % 2 == 0]
-const express = require('express'); app.listen(3000);
-while (ptr != nullptr) { ptr = ptr->next; }
-git commit -m "Fixed another bug 💀"
