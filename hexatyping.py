@@ -148,7 +148,7 @@ def play_game(stdscr, mode, sub_mode=None):
 
 def main(stdscr):
     main_options = ["Normal", "Programming", "Symbols", "General Knowledge", "Programming Knowledge", "OS Commands", "Exit"]
-    prog_options = ["Python", "C++", "JavaScript", "Rust", "Bash", "Back"]
+    prog_options = ["Python", "Rust", "Bash", "Back"]
     
     while True:
         choice = generic_menu(stdscr, "HEXATYPING MAIN", main_options)
